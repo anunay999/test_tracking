@@ -1,0 +1,9 @@
+{% extends 'test_cases/base.html' %}
+
+{% block content %}
+    <h2>New post</h2>
+    <form method="POST" action="{% url 'myapp:index' %}">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+{% endblock %}
