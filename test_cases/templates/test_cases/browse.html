@@ -1,0 +1,15 @@
+{% extends 'test_cases/base.html' %}
+
+{% block content %}
+<h1>Modules</h1>
+<br/>
+<div class="list-group">
+    <a href="#" class="list-group-item active"><h3>Modules</h3></a>
+    <form action="{% url 'myapp:module'%}" method="POST">
+        {% for i in mod%}
+        <input type='text' name = "module" readonly><a href="#" class="list-group-item">i</a></input>
+        {%endfor%}
+    </form>
+    
+  </div>
+{% endblock %}
