@@ -1,15 +1,59 @@
 {% extends 'test_cases/base.html' %}
 
 {% block content %}
-<h1>Modules</h1>
+<script type="text/javascript">
+  function  getModule(e){
+    var mod = e.innerHTML
+    $.ajax({
+            url: "{% url 'myapp:browse' %}",
+              type: "POST",
+              data: { 'module': 'module'},
+              dataType: 'json',
+              csrfmiddlewaretoken: getCookie('csrftoken'),
+              success: function(response){
+                    //do action
+                    alert("Success");
+
+              },
+              error: function(){
+                    // do action
+                    alert("Fail");
+              }
+          });
+  }
+
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            }
+        }
+    });
+</script>
 <br/>
-<div class="list-group">
+<div class="list-group" style="align-content: center;">
     <a href="#" class="list-group-item active"><h3>Modules</h3></a>
-    <form action="{% url 'myapp:module'%}" method="POST">
-        {% for i in mod%}
-        <input type='text' name = "module" readonly><a href="#" class="list-group-item">i</a></input>
-        {%endfor%}
-    </form>
-    
+    {% for i in module%}
+        <a href="{% url 'myapp:module' i %}" class="list-group-item module">{{i}}</a>
+    {%endfor%}
   </div>
 {% endblock %}

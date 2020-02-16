@@ -101,7 +101,7 @@ function csrfSafeMethod(method) {
               class="fas fa-plus fa-2x" aria-hidden="true"></i></a></span>
         
           <tbody>
-            <form action="{% url 'myapp:track' %}" method="post" id="trackForm">
+            <form action="{% url 'myapp:edit' module%}" method="post" id="trackForm">
                 {% csrf_token %}
                 <table class="table table-bordered table-responsive-md table-striped text-center" id="table">
                     <thead>
@@ -114,7 +114,7 @@ function csrfSafeMethod(method) {
                         <th class="text-center">Pass/Fail</th>
                       </tr>
                     </thead>
-                {% for row in sheet%}
+                {% for row in records%}
 
                 <tr id="row">
                   <td class="pt-3-half" contenteditable="false" id="scenario{{ forloop.counter }}">{{row.scenario}}</td>
@@ -126,9 +126,20 @@ function csrfSafeMethod(method) {
                     <td>
                       <div class="btn-group">
                               <select class ="result" name="result{{ forloop.counter }}" value="result" id="result{{ forloop.counter }}">
-                                {% for i in choices%}
-                                <option id="option-{{i}}" value="{{ i }}" data-catid="{{ i }}-{{ forloop.counter }}">{{i}}</option>
-                                {% endfor %}
+                                {% if row.result == "Pass" %}
+
+                                <option id="option-Pass" value="Pass">Pass</option>
+                                <option id="option-Fail" value="Fail" >Fail</option>
+                                {% else %}
+                                <option id="option-Fail" value="Fail" >Fail</option>
+                                <option id="option-Pass" value="Pass" >Pass</option>
+                                
+                                {% endif%}
+                                
+                                <!-- <option id="option-Pass" value="Pass">Pass</option>
+                                <option id="option-Fail" value="Fail" >Fail</option> -->
+                                
+
                               </select>
                           </div>
                     </td>

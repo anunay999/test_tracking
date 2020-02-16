@@ -2,6 +2,8 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django import forms
+from django.contrib.sessions.models import Session
+
 
 
 class Tracker(models.Model):
@@ -15,7 +17,7 @@ class Tracker(models.Model):
     kainos_id = models.CharField("Kainos Automated TC ID",max_length = 200,null=True)
     last_modified = models.DateTimeField('Last Modified',null=True)
     result = models.CharField('Result',choices = choices,max_length=10,null=True)
-    session_id = models.CharField('Session ID',null = True,max_length=250)
+    session_id = models.ForeignKey(Session,on_delete=models.CASCADE)
     def __str__(self):
         return str(self.scenario)+' ->  Tested by   '+str(self.name)
 

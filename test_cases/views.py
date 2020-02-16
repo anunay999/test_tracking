@@ -27,6 +27,8 @@ import pandas as pd
 def index(request):
     try:
         if(request.method == "GET"):
+            #request.session.clear()
+            #request.session.create()
             return render(request, 'test_cases/index.html', {})
 
         elif(request.method == 'POST'):
@@ -106,9 +108,9 @@ def track(request):
                 record.result=result
                 record.last_modified = timezone.now()
                 record.save()
+                remove_dups()
                 l.append(record)
-            return render(request, 'test_cases/error.html', {'error': l})
-
+            return redirect('browse/')
                 #record = obj.get(kainos_id=kainos_id)
                 #record.result = result
                 #record.last_modified = datetime.now()
@@ -131,23 +133,55 @@ def track(request):
         #obj.last_modified = datetime.now()
         #obj = Tracker.objects.all()
 def browse(request):
-    records  = Tracker.objects.all()
-    mod = set()
-    for i in records:
-        mod.add(i.module)
-    return render(request, 'test_cases/browse.html', {'module': mod})
+    if(request.method=='GET'):
+        records  = Tracker.objects.all()
+        mod = set()
+        for i in records:
+            mod.add(i.module)
+        return render(request, 'test_cases/browse.html', {'module': mod})
+
 
 def error(request):
     return render(request, 'test_cases/error.html', {})
 
+def edit(request,module):
+    if(request.method=="GET"):
+        records = Tracker.objects.filter(module = module)
+
+        return render(request, 'test_cases/edit.html', {'records':records,"module":module})
+    elif(request.method=="POST"):
+        obj = Tracker.objects.filter(module=module)
+        kainos = 'kainos_id'
+        res = 'result'
+        records = len(obj)+1
+        l = []    
+        for i in range(1,records):        
+            kainos_id = request.POST[kainos+str(i)]
+            result = request.POST[res+str(i)]
+            record = obj.get(kainos_id=kainos_id)
+            record.result=result
+            record.last_modified = timezone.now()
+            record.save()
+            remove_dups()
+            l.append(record)
+        records  = Tracker.objects.all()
+        mod = set()
+        for i in records:
+            mod.add(i.module)
+        return render(request, 'test_cases/browse.html', {'module': mod}) #render(request,'test_cases/module.html',{'records':obj,'module':obj})
+        
 
 def remove_dups():
     for row in Tracker.objects.all():
         if(Tracker.objects.filter(kainos_id=row.kainos_id).count() > 1):
             row.delete()
-def module(request):
-    if(request.method=="POST"):
-        return redirect("track/")
+
+def module(request,module):
+    if(request.method=="GET"):
+        records = Tracker.objects.filter(module=module)
+
+
+        return render(request,'test_cases/module.html',{'records':records,'module':module})
 
 
 
