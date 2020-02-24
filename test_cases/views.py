@@ -21,14 +21,13 @@ import openpyxl
 from django.shortcuts import redirect
 import datetime
 import pandas as pd
+import uuid
 
 
 # Create your views here.
 def index(request):
     try:
         if(request.method == "GET"):
-            #request.session.clear()
-            #request.session.create()
             return render(request, 'test_cases/index.html', {})
 
         elif(request.method == 'POST'):
@@ -58,6 +57,8 @@ def load_workbook(request):
         print(worksheet)
 
         excel_data = list()
+        import_id = str(uuid.uuid1())
+            
     # iterating over the rows and
     # getting value from each cell in row
         for i in sheet.iterrows():#worksheet.iter_rows():#sheet.iterrows():
@@ -66,20 +67,22 @@ def load_workbook(request):
             #for cell in row:
             #    row_data.append(str(cell.value))
             
-            '''case = row_data[0]
+            '''
+            case = row_data[0]
             case_id = row_data[1]
             excel_data.append(row_data)
             '''
-            
+            request.session['uuid'] = import_id
             case = row['Scenario'] #row_data[0]
-            case_id = row['Kainos Automated TC ID']#row_data[1]
+            case_id = row['Kainos_ID']#row_data[1]
             name = request.POST['name']
             module = request.POST['module']
             email = request.POST['email']
-            session = request.session.session_key
+            
             obj = Tracker(name=name, email=email, module=module,
-                kainos_id=case_id, scenario=case,session_id=session)
+                kainos_id=case_id, scenario=case,uuid=import_id)
             obj.save()
+
             #remove_dups()
     except(NameError):
         return render(request, 'test_cases/error.html', {'error': 'Could not load the sheet'})
@@ -89,26 +92,25 @@ def load_workbook(request):
 def track(request):
     try:
         if("GET" == request.method):
-            obj = Tracker.objects.filter(session_id=request.session.session_key)
+            import_id = request.session['uuid']
+            obj = Tracker.objects.filter(uuid=import_id)
             #choices = Tracker._meta.get_field('result').choices
             choices = ['Select','Pass','Fail']
             return render(request, 'test_cases/track.html', {'sheet': obj,'choices':choices})
         elif("POST"==request.method):
-            obj = Tracker.objects.filter(session_id=request.session.session_key)
+            import_id = request.session['uuid']
+            obj = Tracker.objects.filter(uuid = import_id)
             kainos = 'kainos_id'
             res = 'result'
             records = len(obj)+1
             l = []
-            
             for i in range(1,records):
-                
                 kainos_id = request.POST[kainos+str(i)]
                 result = request.POST[res+str(i)]
                 record = obj.get(kainos_id=kainos_id)
                 record.result=result
                 record.last_modified = timezone.now()
                 record.save()
-                remove_dups()
                 l.append(record)
             return redirect('browse/')
                 #record = obj.get(kainos_id=kainos_id)
@@ -147,7 +149,6 @@ def error(request):
 def edit(request,module):
     if(request.method=="GET"):
         records = Tracker.objects.filter(module = module)
-
         return render(request, 'test_cases/edit.html', {'records':records,"module":module})
     elif(request.method=="POST"):
         obj = Tracker.objects.filter(module=module)
@@ -182,7 +183,21 @@ def module(request,module):
 
 
         return render(request,'test_cases/module.html',{'records':records,'module':module})
+def upload(request):
+    try:
+        if(request.method == "GET"):
+            return render(request, 'test_cases/index.html', {})
 
+        elif(request.method == 'POST'):
+            load_workbook(request)
+            render(request, 'upload.html', {'successful_submit': True})
+
+    except(NameError, MultiValueDictKeyError, Tracker.DoesNotExist):
+        return render(request, 'test_cases/error.html', {'error': 'Please check the information and try again@'})
+    except(MultipleObjectsReturned):
+        return render(request, 'test_cases/error.html', {'error': 'Multiple Objects Returned'})
+    else:
+        return HttpResponseRedirect("/track")
 
 
 '''def index(request):

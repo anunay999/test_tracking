@@ -6,7 +6,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('track/', views.track, name='track'),
     path('error/', views.error, name='error'),
-
+    path('track/upload', views.upload, name='upload'),
     path('track/browse/', views.browse, name='browse'),
     path('browse/<str:module>/', views.module, name='module'),
     path('browse/edit/<str:module>', views.edit, name='edit'),

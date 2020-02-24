@@ -1,0 +1,91 @@
+{% extends 'test_cases/base.html' %}
+
+{% block content %}
+
+{% if successful_submit %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#popModal").modal('show');
+        });
+    </script>
+{% endif %}
+<div class="form-content">
+    <form action="{% url 'myapp:upload' %}" method="post" enctype="multipart/form-data">
+       {% csrf_token %}
+       <div class="form-group">
+        <label for="file">Upload File</label>
+        <input type="file" id="file" name="file" required="required"/>
+      </div>
+
+       <div class="form-group">
+            <button type="submit" value="Upload">Upload</button>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+
+
+<!--
+<div class="modal fade" id="popModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <tbody>
+                <form action="{% url 'myapp:track' %}" method="post" id="trackForm">
+                    {% csrf_token %}
+                    <table class="table table-bordered table-responsive-md table-striped text-center" id="table">
+                        <thead>
+                          <tr>
+                            <th class="text-center">Scenario</th>
+                            <th class="text-center">Last Modified</th>
+                            <th class="text-center">Tester</th>
+                            <th class="text-center">Module</th>
+                            <th class="text-center">Kainos Automation</th>
+                            <th class="text-center">Pass/Fail</th>
+                          </tr>
+                        </thead>
+                    {% for row in sheet%}
+    
+                    <tr id="row">
+                      <td class="pt-3-half" contenteditable="false" id="scenario{{ forloop.counter }}">{{row.scenario}}</td>
+                        <td class="pt-3-half" contenteditable="false" id="last_modified{{ forloop.counter }}">{{row.last_modified}}</td>
+                        <td class="pt-3-half" contenteditable="false" id="name{{ forloop.counter }}">{{row.name}}</td>
+                        <td class="pt-3-half" contenteditable="false" id="last_modified{{ forloop.counter }}">{{row.module}}</td>
+                        
+                        <td class="pt-3-half" contenteditable="true" id="kainos_id{{ forloop.counter }}"><input type="text" name="kainos_id{{forloop.counter}}" value="{{row.kainos_id}}" readonly></td>
+                        <td>
+                          <div class="btn-group">
+                                  <select class ="result" name="result{{ forloop.counter }}" value="result" id="result{{ forloop.counter }}">
+                                    {% for i in choices%}
+                                    <option id="option-{{i}}" value="{{ i }}" data-catid="{{ i }}-{{ forloop.counter }}">{{i}}</option>
+                                    {% endfor %}
+                                  </select>
+                              </div>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                </table>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button class="btn btn-primary" type="submit" value="Upload" id="submit">Submit</button>
+        </div>
+    </form>
+       
+      </div>
+    </div>
+  </div>
+-->
+{% endblock %}

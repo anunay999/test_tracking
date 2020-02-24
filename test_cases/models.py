@@ -7,9 +7,7 @@ from django.contrib.sessions.models import Session
 
 
 class Tracker(models.Model):
-    choices =( 
-    ("Pass","Pass"),("Fail","Fail")
-    ) 
+    choices =(("Pass","Pass"),("Fail","Fail"))
     name = models.CharField('Name',max_length=100,null=True)
     email = models.CharField('Email',max_length=100,null=True)
     module = models.CharField('Module',max_length=100,null=True)
@@ -17,7 +15,7 @@ class Tracker(models.Model):
     kainos_id = models.CharField("Kainos Automated TC ID",max_length = 200,null=True)
     last_modified = models.DateTimeField('Last Modified',null=True)
     result = models.CharField('Result',choices = choices,max_length=10,null=True)
-    session_id = models.ForeignKey(Session,on_delete=models.CASCADE)
+    uuid = models.CharField('uuid',max_length = 1000,null=True) #models.ForeignKey(Session,on_delete=models.CASCADE)
     def __str__(self):
         return str(self.scenario)+' ->  Tested by   '+str(self.name)
 

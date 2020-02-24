@@ -1,98 +1,7 @@
-<html>
-    <head>
-        <title>
-            Test Scripts Tracking
-        </title>
-        <header>
-            <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
-            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-            <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-            <!--<script type="text/javascript" src="assets/JS/renderData.js"></script>-->
-          </header>
-        <style>
-            html {
-              width: 100%;
-              height: 100%;
-            }
-           </style>         
-    </head>
-    <script type="text/javascript">
-   /*var data ={}
-for(i=1;i<=len;i++)
-{
-  al
-    var temp =
-    {
-         kainos_id:$("#kainos_id"+i).val(),
-         name:$("#name"+i).val(),
-         result:$("#result"+i).val(),
-         scenario:$("#scenario"+i).val()
-    };
-    data.append(temp);
-}
-alert(data);}
+{% extends 'test_cases/base.html' %}
 
+{% block content %}
 
-
-$(document).ready(function(){
-    $("select.result").change(function(){
-        var selectedCountry = $(this).children("option:selected").val();
-        var kainos_id = 'ROTP.0001'
-           $.ajax(
-           {
-            type:"POST",
-               url: "{% url 'myapp:track' %}",
-               data:{
-                        kainos_id: kainos_id,
-                        result : selectedCountry,
-                        csrfmiddlewaretoken: getCookie('csrftoken') // No traling comma
-
-               },
-               
-               success: function(data) {
-                 alert("Success")
-              },
-              error: function(data){
-        alert("fail");
-    }
-            })
-        //alert("You have selected the country - " + selectedCountry);
-    });
-});
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-function csrfSafeMethod(method) {
-        // these HTTP methods do not require CSRF protection
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-            }
-        }
-    });
-*/
-    </script>
-    <body>
-        <!-- Editable table -->
 <div class="card">
     <h3 class="card-header text-center font-weight-bold text-uppercase py-4">Test Scripts Tracking</h3>
     <div class="card-body">
@@ -157,6 +66,4 @@ function csrfSafeMethod(method) {
       </div>
     </div>
   </div>
-  </body>
-  <!-- Editable table -->
-</html>
+  {% endblock %}
