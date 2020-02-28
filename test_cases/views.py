@@ -22,6 +22,41 @@ from django.shortcuts import redirect
 import datetime
 import pandas as pd
 import uuid
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
+from django.views.generic import TemplateView
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import permission_required
+
+
+def login(request):
+    if(request.method=="GET"):
+        return render(request,'test_cases/login.html',{})
+    elif(request.method=="POST"):
+        username = request.POST['name']
+        password = request.POST['password']
+        #request.session['name'] 
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request,user)
+            return redirect('/track/browse/')
+        else:
+            return render(request,'test_cases/login.html',{'message':'Invalid Username or Password'})
+
+
+def base(request):
+    if(request.method=="GET"):
+        return HttpResponseRedirect('/login')
+
+
+def logout(request):
+
+    if(request.method=='GET'):
+        auth_logout(request)
+        return render(request,'test_cases/logout.html',{})
+    
 
 
 # Create your views here.
@@ -40,7 +75,7 @@ def index(request):
     except(MultipleObjectsReturned):
         return render(request, 'test_cases/error.html', {'error': 'Multiple Objects Returned'})
     else:
-        return HttpResponseRedirect("/track")
+        return redirect(reverse('/track/browse/'),permanent=True)
 
 
 def load_workbook(request):
@@ -73,6 +108,7 @@ def load_workbook(request):
             excel_data.append(row_data)
             '''
             request.session['uuid'] = import_id
+            request.session['name'] = request.POST['name']
             case = row['Scenario'] #row_data[0]
             case_id = row['Kainos_ID']#row_data[1]
             name = request.POST['name']
@@ -88,7 +124,8 @@ def load_workbook(request):
         return render(request, 'test_cases/error.html', {'error': 'Could not load the sheet'})
     # return render(request, 'test_cases/track.html', {"excel_data":excel_data})
 
-    
+
+@permission_required('test_cases.can_view', login_url='/login/')
 def track(request):
     try:
         if("GET" == request.method):
@@ -134,6 +171,7 @@ def track(request):
         
         #obj.last_modified = datetime.now()
         #obj = Tracker.objects.all()
+@permission_required('test_cases.can_view', login_url='/login/')
 def browse(request):
     if(request.method=='GET'):
         records  = Tracker.objects.all()
@@ -146,6 +184,8 @@ def browse(request):
 def error(request):
     return render(request, 'test_cases/error.html', {})
 
+
+@permission_required('entity.can_view', login_url='/login/')
 def edit(request,module):
     if(request.method=="GET"):
         records = Tracker.objects.filter(module = module)
@@ -177,12 +217,14 @@ def remove_dups():
         if(Tracker.objects.filter(kainos_id=row.kainos_id).count() > 1):
             row.delete()
 
+
+@permission_required('test_cases.can_view', login_url='/login/')
 def module(request,module):
     if(request.method=="GET"):
         records = Tracker.objects.filter(module=module)
-
-
         return render(request,'test_cases/module.html',{'records':records,'module':module})
+
+
 def upload(request):
     try:
         if(request.method == "GET"):

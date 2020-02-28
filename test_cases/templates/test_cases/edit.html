@@ -1,7 +1,8 @@
 {% extends 'test_cases/base.html' %}
 
 {% block content %}
-
+<div class="col-xs-9">
+                        
 <div class="card">
     <h3 class="card-header text-center font-weight-bold text-uppercase py-4">Test Scripts Tracking</h3>
     <div class="card-body">
@@ -56,8 +57,8 @@
                   {% endfor %}
                 </tbody>
             </table>
-                    <div class="form-group" style="align-self: center;margin-left: 700px;">
-                        <button class="btn btn-primary" type="submit" value="Upload" id="submit">Submit</button>
+                    <div class="form-group" style="vertical-align: middle; margin-left: auto;">
+                        <button class="btn btn-primary align-self-center"  type="submit" value="Upload" id="submit">Submit</button>
                       </div>
                 
             </form>
@@ -66,4 +67,6 @@
       </div>
     </div>
   </div>
+  </div>
+  
   {% endblock %}

@@ -1,10 +1,12 @@
 <html>
     <head>
-        <title>Test Tracker</title>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-        <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+            <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
         <script>
             function openNav() {
     document.getElementById("mySidenav").style.width = "250px";
@@ -20,6 +22,10 @@ function closeNav() {
         </script>
     </head>
     <style>
+        .down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
         .sidenav {
     height: 100%;
     width: 0;
@@ -27,7 +33,7 @@ function closeNav() {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: white;
+    background-color:#A7EEE9;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -37,7 +43,7 @@ function closeNav() {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
-    color: grey;
+    color: rgb(66, 58, 58);
     display: block;
     transition: 0.3s;
 }
@@ -71,7 +77,7 @@ function closeNav() {
 
     </style>
     <body>
-        <div class="container-fluid bg-1">
+        <div class="container-fluid">
             <div id="mySidenav" class="sidenav">
                 <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
                 <a href="{% url 'myapp:index' %}">Home</a>
@@ -79,19 +85,49 @@ function closeNav() {
                 <a href="{% url 'myapp:upload' %}">Upload</a>
                 <a href="{% url 'myapp:upload' %}">Dashboard</a>
                 <a href="{% url 'myapp:upload' %}">Reports</a>
+                <a href="{% url 'myapp:upload' %}" data-toggle="modal" data-target="#exampleModal">Logout</a>
+                
             </div>
               <div id="main">
                   <span style="font-size:28px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>
               </div>
+              
+              <div class='container-fluid' >
+                
+                  <!-- Modal -->
+                  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Logout</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          Are you sure you want to logout?
+                        </div>
+                        <div class="modal-footer">
+                            <button style="margin-bottom: 15px;" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <p>
+                                <a class="btn btn-danger" href="{% url 'myapp:logout' %}"> Logout</a>
+                            </p>    
+                          
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <div class = "container-fluid" style="margin-left: 0px;">
             <div class="page-header">
-                <h1 style="text-align: center;margin-right: 350px;"><a href="/">Test Tracker</a></h1>
+                <h1 style="text-align: center;padding: 20px;"><a href="/">Test Tracker</a></h1>
             </div>
             <div class="content container">
                 <div class="row">
-                    <div class="col-md-8">
-                        {% block content %}
+                    {% block content %}
                         {% endblock %}
-                    </div>
+                    
                 </div>
             </div>
         </div>
