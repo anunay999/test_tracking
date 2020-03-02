@@ -13,7 +13,9 @@ urlpatterns = [
     path('browse/<str:module>/', views.module, name='module'),
     path('browse/edit/<str:module>', views.edit, name='edit'),
     path('logout/', views.logout, name='logout'),
-    
+    path('dashboard', views.dashboard, name='dashboard'),
+
+
     
     
     #path('<int:pk>/results/', views.ResultsView.as_view(), name='results'),

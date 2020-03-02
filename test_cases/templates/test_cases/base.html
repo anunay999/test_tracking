@@ -7,6 +7,8 @@
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    
         <script>
             function openNav() {
     document.getElementById("mySidenav").style.width = "250px";
@@ -124,11 +126,9 @@ function closeNav() {
                 <h1 style="text-align: center;padding: 20px;"><a href="/">Test Tracker</a></h1>
             </div>
             <div class="content container">
-                <div class="row">
                     {% block content %}
                         {% endblock %}
                     
-                </div>
             </div>
         </div>
     </body>

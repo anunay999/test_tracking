@@ -26,10 +26,11 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.views.generic import TemplateView
-
+from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required
-
+from django.http import JsonResponse
+import xlwt
 
 def login(request):
     if(request.method=="GET"):
@@ -240,6 +241,22 @@ def upload(request):
         return render(request, 'test_cases/error.html', {'error': 'Multiple Objects Returned'})
     else:
         return HttpResponseRedirect("/track")
+
+def dashboard(request):
+    labels = []
+    data = []
+    records  = Tracker.objects.all()
+    mod = set()
+    for i in records:
+        mod.add(i.module)
+    labels = list(mod)
+    for i in mod:
+        data.append(Tracker.objects.filter(module=i).count())
+
+    return render(request, 'dashboard.html', {
+        'labels': labels,
+        'data': data,
+    })
 
 
 '''def index(request):
