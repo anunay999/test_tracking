@@ -5,9 +5,9 @@
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
             <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+            
     
         <script>
             function openNav() {
@@ -28,6 +28,15 @@ function closeNav() {
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
 }
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.eot');
+  src: url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.eot#iefix') format('embedded-opentype'), url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.woff') format('woff'), url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
+}
+.chart-card{
+    padding: 20px;
+}
+
         .sidenav {
     height: 100%;
     width: 0;
@@ -76,17 +85,19 @@ function closeNav() {
   color: #3A3B3C;
   text-decoration: none;
 }
+.space-margin
+{
+    margin: 20px;
+}
 
     </style>
     <body>
         <div class="container-fluid">
             <div id="mySidenav" class="sidenav">
                 <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                <a href="{% url 'myapp:index' %}">Home</a>
                 <a href="{% url 'myapp:browse' %}">Browse</a>
                 <a href="{% url 'myapp:upload' %}">Upload</a>
-                <a href="{% url 'myapp:upload' %}">Dashboard</a>
-                <a href="{% url 'myapp:upload' %}">Reports</a>
+                <a href="{% url 'myapp:dashboard' %}">Dashboard</a>
                 <a href="{% url 'myapp:upload' %}" data-toggle="modal" data-target="#exampleModal">Logout</a>
                 
             </div>
@@ -122,9 +133,7 @@ function closeNav() {
             </div>
         </div>
         <div class = "container-fluid" style="margin-left: 0px;">
-            <div class="page-header">
-                <h1 style="text-align: center;padding: 20px;"><a href="/">Test Tracker</a></h1>
-            </div>
+            
             <div class="content container">
                     {% block content %}
                         {% endblock %}

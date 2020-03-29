@@ -4,12 +4,9 @@
 <div class="col-xs-9">
                         
 <div class="card">
-    <h3 class="card-header text-center font-weight-bold text-uppercase py-4">Test Scripts Tracking</h3>
+    <h3 class="card-header text-center font-weight-bold text-uppercase py-4">{{category}}</h3>
     <div class="card-body">
       <div id="table" class="table-editable">
-        <span class="table-add float-right mb-3 mr-2"><a href="#!" class="text-success"><i
-              class="fas fa-plus fa-2x" aria-hidden="true"></i></a></span>
-        
           <tbody>
             <form action="{% url 'myapp:edit' module%}" method="post" id="trackForm">
                 {% csrf_token %}
@@ -19,7 +16,6 @@
                         <th class="text-center">Scenario</th>
                         <th class="text-center">Last Modified</th>
                         <th class="text-center">Tester</th>
-                        <th class="text-center">Module</th>
                         <th class="text-center">Kainos Automation</th>
                         <th class="text-center">Pass/Fail</th>
                       </tr>
@@ -30,7 +26,6 @@
                   <td class="pt-3-half" contenteditable="false" id="scenario{{ forloop.counter }}">{{row.scenario}}</td>
                     <td class="pt-3-half" contenteditable="false" id="last_modified{{ forloop.counter }}">{{row.last_modified}}</td>
                     <td class="pt-3-half" contenteditable="false" id="name{{ forloop.counter }}">{{row.name}}</td>
-                    <td class="pt-3-half" contenteditable="false" id="last_modified{{ forloop.counter }}">{{row.module}}</td>
                     
                     <td class="pt-3-half" contenteditable="true" id="kainos_id{{ forloop.counter }}"><input type="text" name="kainos_id{{forloop.counter}}" value="{{row.kainos_id}}" readonly></td>
                     <td>

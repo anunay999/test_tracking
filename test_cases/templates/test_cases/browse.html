@@ -1,62 +1,59 @@
 {% extends 'test_cases/base.html' %}
 
 {% block content %}
-<script type="text/javascript">
-  function  getModule(e){
-    var mod = e.innerHTML
-    $.ajax({
-            url: "{% url 'myapp:browse' %}",
-              type: "POST",
-              data: { 'module': 'module'},
-              dataType: 'json',
-              csrfmiddlewaretoken: getCookie('csrftoken'),
-              success: function(response){
-                    //do action
-                    alert("Success");
-
-              },
-              error: function(){
-                    // do action
-                    alert("Fail");
-              }
-          });
-  }
-
-  function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
+<style>
+.row{
+  margin-left: 250px;
+  
 }
-function csrfSafeMethod(method) {
-        // these HTTP methods do not require CSRF protection
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-            }
-        }
-    });
+.rot:active{
+  transform: rotateZ(-180deg);
+}
+</style>
+<script type="text/javascript">
+  var a = "{{dict}}";
+  var j = JSON.parse(a)
+  alert(j);
+
+    
 </script>
-<div class="row">
+<p>{{dict}}</p>
+
+
+<div class="row ">
   <div class="col-md-8">
     <div class="list-group" style="align-content: center;">
-      <a href="#" class="list-group-item active"><h3>Modules</h3></a>
-      {% for i in module%}
-          <a href="{% url 'myapp:module' i %}" class="list-group-item module">{{i}}</a>
-      {%endfor%}
-    </div>
+      <a href="#" class="list-group-item active text-center"><h3>Modules</h3></a>
+      <div class="btn-group">
+        <a href="{% url 'myapp:module' 'All' %}" class="btn btn-light col col-lg text-left">All</a>
+      </div>
+      
+      {% for key1,value1 in dict.items%}  
+      <div class="btn-group">
+        
+          <a href="{% url 'myapp:module' i %}" class="btn btn-light col col-lg text-left">{{key1}}</a>
+            <button type="button" class="btn btn-light dropdown-toggle px-3 rot" data-toggle="collapse" data-target="#collapseOne{{i}}" aria-expanded="true" aria-controls="collapseOne{{i}}">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+        </div>
+        <div id="collapseOne{{i}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+              {% for key2,value2 in value1.items %}
+              <div class="list-group" style="align-content: center;">
+                <div class="btn-group">
+                  <a href="{% url 'myapp:category' module=i category=j%}" class="btn btn-warning col col-lg text-left">{{value2}}</a>
+                </div>
+              </div>
+              
+              {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
   </div>
 </div>
+
 {% endblock %}
+
+
+

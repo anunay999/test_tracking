@@ -2,36 +2,114 @@
 
 {% block content %}
 
-<div id="container" style="width: 75%;">
-    <canvas id="pie-chart"></canvas>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-  <script>
+<script> 
+	var endpoint = "{% url 'myapp:dashboard_data' %}"; 
+	var defaultData = [];
+	var defaultlabels = [];
+	$.ajax({ 
+	method: "GET", 
+	url: endpoint, 
+	success: function(data) { 
+		//drawLineGraph(data, 'myChartline'); 
+		defaultData = data.data;
+		defaultlabels = data.labels;
+		setChart('myChart1','bar',defaultlabels,defaultData);	
+		setChart('myChart2','pie',defaultlabels,defaultData);	
+		setChart('myChart3','doughnut',defaultlabels,defaultData);	
+		setChart('myChart4','polarArea',defaultlabels,defaultData);	
+			
+	},   
+	error: function(error_data) { 
+		console.log(error_data); 
+	} 
+	}); 
+	function setChart(elementID,chartType,defaultlabels,defaultData){
+		var ctx = document.getElementById(elementID).getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: chartType,
+			data: {
+				labels: defaultlabels,
+				datasets: [{
+					label: 'Modules Count',
+					data: defaultData,
+					backgroundColor: [
+						'rgba(255, 99, 132, 0.2)',
+						'rgba(54, 162, 235, 0.2)',
+						'rgba(255, 206, 86, 0.2)',
+						'rgba(75, 192, 192, 0.2)',
+						'rgba(153, 102, 255, 0.2)',
+						'rgba(255, 159, 64, 0.2)'
+					],
+					borderColor: [
+						'rgba(255, 99, 132, 1)',
+						'rgba(54, 162, 235, 1)',
+						'rgba(255, 206, 86, 1)',
+						'rgba(75, 192, 192, 1)',
+						'rgba(153, 102, 255, 1)',
+						'rgba(255, 159, 64, 1)'
+					],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				}
+			}
+		});
+	}
+	
+</script> 
 
-    var config = {
-      type: 'pie',
-      data: {
-        datasets: [{
-          data: {{ data|safe }},
-          backgroundColor: [
-            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
-          ],
-          label: 'Population'
-        }],
-        labels: {{ labels|safe }}
-      },
-      options: {
-        responsive: true
-      }
-    };
+<div class="container-fluid">
+	<div class="row">
+		<div class="card chart-card col-lg-6 box">
 
-    window.onload = function() {
-      var ctx = document.getElementById('pie-chart').getContext('2d');
-      window.myPie = new Chart(ctx, config);
-    };
+			<!-- Card content -->
+			<div class="card-body pb-0">
+		
+			<!-- Title -->
+			<h4 class="card-title font-weight-bold text-center">Count</h4>
+			<canvas id="myChart1"></canvas>
+			</div>
+		</div>
+		<div class="card chart-card col-sm-6">
 
-  </script>
+			<!-- Card content -->
+			<div class="card-body pb-0">
+		
+			<!-- Title -->
+			<h4 class="card-title font-weight-bold text-center">Status</h4>
+			<canvas id="myChart2"></canvas>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="card chart-card col-lg-6 box">
 
+			<!-- Card content -->
+			<div class="card-body pb-0">
+		
+			<!-- Title -->
+			<h4 class="card-title font-weight-bold text-center">Timeline</h4>
+			<canvas id="myChart3"></canvas>
+			</div>
+		</div>
+		<div class="card chart-card col-sm-6">
 
+			<!-- Card content -->
+			<div class="card-body pb-0">
+		
+			<!-- Title -->
+			<h4 class="card-title font-weight-bold text-center">Functional Areas</h4>
+			<canvas id="myChart4"></canvas>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

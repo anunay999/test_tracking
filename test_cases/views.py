@@ -1,7 +1,12 @@
 from django.shortcuts import render
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import JsonResponse
+from rest_framework.views import APIView,View
+from rest_framework.response import Response
 # Create your views here.
+import json
+from django.core.serializers import serialize
 from django.template import loader
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -29,11 +34,79 @@ from django.views.generic import TemplateView
 from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required
-from django.http import JsonResponse
 import xlwt
 
+class DashboardView(View):
+    def get(self,request,*args,**kwargs):
+        return render(request,'test_cases/dashboard.html')
+
+class EditModelView(APIView):
+    def get(self, request, module,format=None):
+        if(module == 'All'):
+            records = Tracker.objects.all()
+        else:                
+            records = Tracker.objects.filter(module=module) 
+        return render(request, 'test_cases/edit.html', {'records':records,"module":module})
+
+    def post(self,request,module):
+        obj = Tracker.objects.filter(module=module)
+        kainos = 'kainos_id'
+        res = 'result'
+        records = len(obj)+1
+        l = list()    
+        for i in range(1,records):        
+            kainos_id = request.POST[kainos+str(i)]
+            result = request.POST[res+str(i)]
+            record = obj.get(kainos_id=kainos_id)
+            record.result=result
+            record.last_modified = timezone.now()
+            record.save()
+            remove_dups()
+            l.append(record)
+        return render(request, 'test_cases/browse.html')
+
+class ChartData(APIView):
+    """
+    View to list all users in the system.
+
+    * Requires token authentication.
+    * Only admin users are able to access this view.
+    """
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, format=None):
+        """
+        Return a list of all users.
+        """
+        labels =  self.get_modules()
+        data =  self.get_module_count(labels)
+        context = {
+            'labels':labels,
+            'data':data
+        }
+        return Response(context)
+
+    def get_modules(self):
+        records  = Tracker.objects.all()
+        mod = set()
+        for i in records:
+            mod.add(i.module)
+        return list(mod)
+
+    def get_module_count(self,mod):
+        data = []
+        for i in mod:
+            data.append(Tracker.objects.filter(module=i).count())
+        return data
+
+
+#@permission_required('entity.can_view', login_url='/track/browse')
 def login(request):
     if(request.method=="GET"):
+        '''if(request.user.is_authenticated()):
+            return  HttpResponseRedirect('/track/browse/')
+        '''
         return render(request,'test_cases/login.html',{})
     elif(request.method=="POST"):
         username = request.POST['name']
@@ -42,7 +115,7 @@ def login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request,user)
-            return redirect('/track/browse/')
+            return HttpResponseRedirect('/track/browse/')
         else:
             return render(request,'test_cases/login.html',{'message':'Invalid Username or Password'})
 
@@ -65,7 +138,6 @@ def index(request):
     try:
         if(request.method == "GET"):
             return render(request, 'test_cases/index.html', {})
-
         elif(request.method == 'POST'):
             load_workbook(request)
             return HttpResponseRedirect("/track")
@@ -109,17 +181,17 @@ def load_workbook(request):
             excel_data.append(row_data)
             '''
             request.session['uuid'] = import_id
-            request.session['name'] = request.POST['name']
+            request.session['name'] = request.user.get_full_name()
             case = row['Scenario'] #row_data[0]
             case_id = row['Kainos_ID']#row_data[1]
-            name = request.POST['name']
+            name = request.user.get_full_name()
             module = request.POST['module']
-            email = request.POST['email']
+            email = request.user.email
+            category = request.POST['category']
             
             obj = Tracker(name=name, email=email, module=module,
-                kainos_id=case_id, scenario=case,uuid=import_id)
+                kainos_id=case_id, scenario=case,uuid=import_id,category=category)
             obj.save()
-
             #remove_dups()
     except(NameError):
         return render(request, 'test_cases/error.html', {'error': 'Could not load the sheet'})
@@ -179,20 +251,47 @@ def browse(request):
         mod = set()
         for i in records:
             mod.add(i.module)
-        return render(request, 'test_cases/browse.html', {'module': mod})
+        dicts = get_files_module(mod)
+
+        return render(request, 'test_cases/browse.html', {'module': mod,'dict':dicts,'HCM':['Anunay','OTP']})
+
+def get_files_module(mod):
+    data = {}
+    for i in mod:
+        cat1 = {}
+        categories = Tracker.objects.filter(module=i)
+        cat_list = set()
+        for cat in categories:
+            cat_list.add(cat.category)
+        for k,p in zip(cat_list,range(1,len(cat_list)+1)):
+            cat1['category'+str(p)] = k    
+        data[i]=cat1
+    return data
 
 
 def error(request):
-    return render(request, 'test_cases/error.html', {})
-
-
-@permission_required('entity.can_view', login_url='/login/')
-def edit(request,module):
+    pass1,fail,count = 0,0,0
     if(request.method=="GET"):
-        records = Tracker.objects.filter(module = module)
-        return render(request, 'test_cases/edit.html', {'records':records,"module":module})
+        records = Tracker.objects.filter(module="PCI")
+        for i in records:
+            count+=1
+            if(i.result == 'Pass'):
+                pass1+=1
+            else:
+                fail+=1
+        percent = (pass1/count)*100
+        return render(request, 'test_cases/error.html', {'module':records,'pass':pass1,'fail':fail,'count':count,'percent':percent})
+
+@permission_required('test_cases.can_view', login_url='/login/')
+def edit_category(request,module,category):
+    if(request.method=="GET"):
+        if(module == 'All'):
+            records = Tracker.objects.all()
+        else:
+            records = Tracker.objects.filter(module=module,category=category)
+        return render(request, 'test_cases/edit.html', {'records':records,"module":module,'category':category})
     elif(request.method=="POST"):
-        obj = Tracker.objects.filter(module=module)
+        obj = Tracker.objects.filter(module=module,category=category)
         kainos = 'kainos_id'
         res = 'result'
         records = len(obj)+1
@@ -211,7 +310,35 @@ def edit(request,module):
         for i in records:
             mod.add(i.module)
         return render(request, 'test_cases/browse.html', {'module': mod}) #render(request,'test_cases/module.html',{'records':obj,'module':obj})
+  
+
         
+
+@permission_required('test_cases.can_view', login_url='/login/')
+def edit(request,module):
+    if(request.method=="GET"):
+        if(module == 'All'):
+            records = Tracker.objects.all()
+        else:
+            records = Tracker.objects.filter(module=module)
+        return render(request, 'test_cases/edit.html', {'records':records,"module":module})
+        #return render(request,'test_cases/error.html',{'name':'Hi!'})
+    elif(request.method=="POST"):
+        obj = Tracker.objects.filter(module=module)
+        kainos = 'kainos_id'
+        res = 'result'
+        records = len(obj)+1
+        l = []    
+        for i in range(1,records):        
+            kainos_id = request.POST[kainos+str(i)]
+            result = request.POST[res+str(i)]
+            record = obj.get(kainos_id=kainos_id)
+            record.result=result
+            record.last_modified = timezone.now()
+            record.save()
+            remove_dups()
+            l.append(record)
+        return redirect('/track/browse/') 
 
 def remove_dups():
     for row in Tracker.objects.all():
@@ -220,10 +347,39 @@ def remove_dups():
 
 
 @permission_required('test_cases.can_view', login_url='/login/')
+def category(request,module,category):
+    if(request.method=="GET"):
+        records = Tracker.objects.filter(module=module,category=category)
+        pass1,fail,count,percent = 0,0,0,0
+        for i in records:
+            count+=1
+            if(i.result == 'Pass'):
+                pass1+=1
+            else:
+                fail+=1
+        if(count>0):
+            percent = (pass1/count)*100
+        return render(request,'test_cases/category.html',{'records':records,'module':module,'category':category,'pass':pass1,'fail':fail,'count':count,'percent':percent})
+       
+
+@permission_required('test_cases.can_view', login_url='/login/')
 def module(request,module):
     if(request.method=="GET"):
-        records = Tracker.objects.filter(module=module)
-        return render(request,'test_cases/module.html',{'records':records,'module':module})
+        if(module == 'All'):
+            records = Tracker.objects.all()
+        else:
+            records = Tracker.objects.filter(module=module)
+        
+        pass1,fail,count,percent = 0,0,0,0
+        for i in records:
+            count+=1
+            if(i.result == 'Pass'):
+                pass1+=1
+            else:
+                fail+=1
+        if(count>0):
+            percent = (pass1/count)*100
+        return render(request,'test_cases/module.html',{'records':records,'module':module,'pass':pass1,'fail':fail,'count':count,'percent':percent})
 
 
 def upload(request):
@@ -241,23 +397,6 @@ def upload(request):
         return render(request, 'test_cases/error.html', {'error': 'Multiple Objects Returned'})
     else:
         return HttpResponseRedirect("/track")
-
-def dashboard(request):
-    labels = []
-    data = []
-    records  = Tracker.objects.all()
-    mod = set()
-    for i in records:
-        mod.add(i.module)
-    labels = list(mod)
-    for i in mod:
-        data.append(Tracker.objects.filter(module=i).count())
-
-    return render(request, 'dashboard.html', {
-        'labels': labels,
-        'data': data,
-    })
-
 
 '''def index(request):
     #session = get_object_or_404(Tracker)
