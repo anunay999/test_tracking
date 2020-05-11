@@ -296,7 +296,7 @@ body {
         <h1>Upload File</h1>
       </div>
       <div class="form-content">
-        <form action="{% url 'myapp:index' %}" method="post" enctype="multipart/form-data">
+        <form action="{% url 'myapp:upload' %}" method="post" enctype="multipart/form-data">
            {% csrf_token %}
           <div class="form-group">
             <label for="module">Testing Module</label>
@@ -311,8 +311,10 @@ body {
             <input type="file" id="file" name="file" required="required"/>
           </div>
           <div class="form-group">
-
-          <div class="form-group">
+            <label for="file">Check to enter values now</label>
+            <input type="checkbox" id="check" name="check" required="required"/>
+          </div>
+          
             <button type="submit" value="Upload">Upload</button>
           </div>
         </form>

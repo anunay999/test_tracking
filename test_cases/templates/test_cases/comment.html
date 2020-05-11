@@ -1,0 +1,151 @@
+<!--
+
+    {% for key1,value1 in dict.items%}  
+      <div class="btn-group">
+        
+          <a href="{% url 'myapp:module' key1 %}" class="btn btn-light col col-lg text-left">{{key1}}</a>
+            <button type="button" class="btn btn-light dropdown-toggle px-3 rot" data-toggle="collapse" data-target="#collapseOne{{i}}" aria-expanded="true" aria-controls="collapseOne{{i}}">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+        </div>
+        <div id="collapseOne{{i}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+              {% for key2,value2 in value1.items %}
+              <div class="list-group" style="align-content: center;">
+                <div class="btn-group">
+                  <a href="{% url 'myapp:category' module=key1 category=value2%}" class="btn btn-warning col col-lg text-left">{{value2}}</a>
+                </div>
+              </div>
+              
+              {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+  
+
+
+
+        <div class="row ">
+  <div class="col-md-8">
+    <div class="list-group" style="align-content: center;">
+      <a href="#" class="list-group-item active text-center"><h3>Modules</h3></a>
+      <div class="btn-group">
+        <a href="{% url 'myapp:module' 'All' %}" class="btn btn-light col col-lg text-left">All</a>
+      </div>
+      
+      {% for i in module%}  
+      <div class="btn-group">
+        
+          <a href="{% url 'myapp:module' i %}" class="btn btn-light col col-lg text-left">{{i}}</a>
+            <button type="button" class="btn btn-light dropdown-toggle px-3 rot" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+        </div>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+  </div>
+</div>
+
+
+
+ ----------------------- 
+<div class="row ">
+  <div class="col-md-8">
+    <div class="list-group" style="align-content: center;">
+      <a href="#" class="list-group-item active text-center"><h3>Modules</h3></a>
+      <div class="btn-group">
+        <a href="{% url 'myapp:module' 'All' %}" class="btn btn-light col col-lg text-left">All</a>
+      </div>
+      
+      {% for i in module%}  
+      <div class="btn-group">
+        
+          <a href="{% url 'myapp:module' i %}" class="btn btn-light col col-lg text-left">{{i}}</a>
+            <button type="button" class="btn btn-light dropdown-toggle px-3"data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+
+            
+            
+        </div>
+        {% endfor %}
+      </div>
+  </div>
+</div>
+<div class="accordion" id="accordionExample">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <div class="btn-group">
+          <a href="{% url 'myapp:module' 'HCM' %}" class="btn btn-light col col-lg text-left">HCM
+            <button type="button" class="btn btn-light dropdown-toggle px-3 text-right rot" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+          </a>
+        </div>
+    </div>
+    
+  </div>
+</div>
+
+
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="list-group" style="align-content: center;">
+      <a href="#" class="list-group-item active"><h3>Modules</h3></a>
+      <a href="{% url 'myapp:module' 'All' %}" class="list-group-item module">All</a>
+      {% for i in module%}
+          <a href="{% url 'myapp:module' i %}" class="list-group-item module">{{i}}</a>
+      {%endfor%}
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="row">
+  <div class="col-md-8">
+    
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      {% for i in module%}
+      <div class="panel panel-default">
+        <div class="panel-heading active" role="tab" id="headingOne">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{i}}" aria-expanded="true" aria-controls="collapseOne{{i}}">
+              {{i}}
+            </a>
+          </h4>
+        </div>
+        <div id="collapseOne{{i}}" class="panel-collapse collapse in col-bod" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </div>
+      </div>
+      {%endfor%}
+    </div>
+</div>
+</div>
+<div class="row">
+  <div class="col-md-8">
+    
+    <div class="list-group" style="align-content: center;">
+      <a href="#" class="list-group-item active"><h3>Modules</h3></a>
+      {% for i in module%}
+
+      <button ><a>{{i}}</a><a href="#browse{{i}}" class="btn btn-light" data-toggle="collapse"><i class="fa fa-arrow-circle-down" style="margin-left: 200px;"></i></a> </button>
+      
+          {%endfor%}
+
+      
+    </div>
+  </div>
+</div>
+-->

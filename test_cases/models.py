@@ -19,7 +19,7 @@ class Tracker(models.Model):
     result = models.CharField('Result',choices = choices,max_length=10,null=True)
     uuid = models.CharField('uuid',max_length = 1000,null=True) #models.ForeignKey(Session,on_delete=models.CASCADE)
     def __str__(self):
-        return str(self.scenario)+' ->  Tested by   '+str(self.name)+' Category : '+str(self.category)
+        return str(self.scenario)+' Module : '+str(self.module)+' Category : '+str(self.category)
 
     
    # details = models.ForeignKey(LoginForm,on_delete=models.CASCADE)

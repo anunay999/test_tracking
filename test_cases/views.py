@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from rest_framework.views import APIView,View
 from rest_framework.response import Response
 # Create your views here.
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 import json
 from django.core.serializers import serialize
 from django.template import loader
@@ -36,42 +37,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required
 import xlwt
 
+class HomeView(View):
+    def get(self,request,*args,**kwargs):
+        return render(request,'test_cases/login.html')
+
 class DashboardView(View):
     def get(self,request,*args,**kwargs):
         return render(request,'test_cases/dashboard.html')
 
-class EditModelView(APIView):
-    def get(self, request, module,format=None):
-        if(module == 'All'):
-            records = Tracker.objects.all()
-        else:                
-            records = Tracker.objects.filter(module=module) 
-        return render(request, 'test_cases/edit.html', {'records':records,"module":module})
-
-    def post(self,request,module):
-        obj = Tracker.objects.filter(module=module)
-        kainos = 'kainos_id'
-        res = 'result'
-        records = len(obj)+1
-        l = list()    
-        for i in range(1,records):        
-            kainos_id = request.POST[kainos+str(i)]
-            result = request.POST[res+str(i)]
-            record = obj.get(kainos_id=kainos_id)
-            record.result=result
-            record.last_modified = timezone.now()
-            record.save()
-            remove_dups()
-            l.append(record)
-        return render(request, 'test_cases/browse.html')
-
 class ChartData(APIView):
-    """
-    View to list all users in the system.
-
-    * Requires token authentication.
-    * Only admin users are able to access this view.
-    """
     authentication_classes = []
     permission_classes = []
 
@@ -100,15 +74,12 @@ class ChartData(APIView):
             data.append(Tracker.objects.filter(module=i).count())
         return data
 
+class LoginView(View):
 
-#@permission_required('entity.can_view', login_url='/track/browse')
-def login(request):
-    if(request.method=="GET"):
-        '''if(request.user.is_authenticated()):
-            return  HttpResponseRedirect('/track/browse/')
-        '''
-        return render(request,'test_cases/login.html',{})
-    elif(request.method=="POST"):
+    def get(self,request,*args,**kwargs):
+        return render(request,'test_cases/login.html')
+    
+    def post(self,request,*args,**kwargs):
         username = request.POST['name']
         password = request.POST['password']
         #request.session['name'] 
@@ -119,83 +90,49 @@ def login(request):
         else:
             return render(request,'test_cases/login.html',{'message':'Invalid Username or Password'})
 
+class LogoutView(View):
 
-def base(request):
-    if(request.method=="GET"):
-        return HttpResponseRedirect('/login')
-
-
-def logout(request):
-
-    if(request.method=='GET'):
+    def get(self,request,*args,**kwargs):
         auth_logout(request)
-        return render(request,'test_cases/logout.html',{})
+        return render(request,'test_cases/logout.html')
+
+class UploadView(View):
+    def get(self,request,*args,**kwargs):
+        return render(request, 'test_cases/index.html')
     
+    def post(self,request,*args,**kwargs):
+        self.load_workbook(request)
+        return HttpResponseRedirect("/track")
 
+    def load_workbook(self,request):
+        try:
+            excel_file = request.FILES["file"]
+            wb = openpyxl.load_workbook(excel_file)
+            sheet = pd.read_excel(excel_file)
+            worksheet = wb["Sheet1"]
+            excel_data = list()
+            import_id = str(uuid.uuid1())
+            for i in sheet.iterrows():
+                row = pd.Series(i[1])
+                request.session['uuid'] = import_id
+                request.session['name'] = request.user.get_full_name()
+                request.session['category'] = request.POST['category']
+                case = row['Scenario'] #row_data[0]
+                case_id = row['Kainos_ID']#row_data[1]
+                name = request.user.get_full_name()
+                module = request.POST['module']
+                email = request.user.email
+                category = request.POST['category']
+                try:
+                    obj = Tracker.objects.get(module=module,kainos_id=case_id,scenario=case)
+                    obj = Tracker.objects.filter(module=module,kainos_id=case_id,scenario=case).update(name=name,email=email,uuid= import_id,category=category)
+                except(ObjectDoesNotExist):
+                    obj = Tracker(name=name, email=email, module=module,kainos_id=case_id, scenario=case,uuid=import_id,category=category)
+                    obj.save()
+        
+        except(NameError):
+            return render(request, 'test_cases/error.html', {'error': 'Could not load the sheet'})
 
-# Create your views here.
-def index(request):
-    try:
-        if(request.method == "GET"):
-            return render(request, 'test_cases/index.html', {})
-        elif(request.method == 'POST'):
-            load_workbook(request)
-            return HttpResponseRedirect("/track")
-
-
-    except(NameError, MultiValueDictKeyError, Tracker.DoesNotExist):
-        return render(request, 'test_cases/error.html', {'error': 'Please check the information and try again@'})
-    except(MultipleObjectsReturned):
-        return render(request, 'test_cases/error.html', {'error': 'Multiple Objects Returned'})
-    else:
-        return redirect(reverse('/track/browse/'),permanent=True)
-
-
-def load_workbook(request):
-    try:
-        excel_file = request.FILES["file"]
-
-    # you may put validations here to check extension or file size
-
-        wb = openpyxl.load_workbook(excel_file)
-        sheet = pd.read_excel(excel_file)
-
-    # getting a particular sheet by name out of many sheets
-        worksheet = wb["Sheet1"]
-        print(worksheet)
-
-        excel_data = list()
-        import_id = str(uuid.uuid1())
-            
-    # iterating over the rows and
-    # getting value from each cell in row
-        for i in sheet.iterrows():#worksheet.iter_rows():#sheet.iterrows():
-            row = pd.Series(i[1])
-            #row_data = list()
-            #for cell in row:
-            #    row_data.append(str(cell.value))
-            
-            '''
-            case = row_data[0]
-            case_id = row_data[1]
-            excel_data.append(row_data)
-            '''
-            request.session['uuid'] = import_id
-            request.session['name'] = request.user.get_full_name()
-            case = row['Scenario'] #row_data[0]
-            case_id = row['Kainos_ID']#row_data[1]
-            name = request.user.get_full_name()
-            module = request.POST['module']
-            email = request.user.email
-            category = request.POST['category']
-            
-            obj = Tracker(name=name, email=email, module=module,
-                kainos_id=case_id, scenario=case,uuid=import_id,category=category)
-            obj.save()
-            #remove_dups()
-    except(NameError):
-        return render(request, 'test_cases/error.html', {'error': 'Could not load the sheet'})
-    # return render(request, 'test_cases/track.html', {"excel_data":excel_data})
 
 
 @permission_required('test_cases.can_view', login_url='/login/')
@@ -203,7 +140,8 @@ def track(request):
     try:
         if("GET" == request.method):
             import_id = request.session['uuid']
-            obj = Tracker.objects.filter(uuid=import_id)
+            category = request.session['category']
+            obj = Tracker.objects.filter(uuid=import_id,category=category)
             #choices = Tracker._meta.get_field('result').choices
             choices = ['Select','Pass','Fail']
             return render(request, 'test_cases/track.html', {'sheet': obj,'choices':choices})
@@ -256,6 +194,15 @@ def browse(request):
         return render(request, 'test_cases/browse.html', {'module': mod,'dict':dicts,'HCM':['Anunay','OTP']})
 
 def get_files_module(mod):
+    '''data = {}
+    for i in mod:
+        categories = Tracker.objects.filter(module=i)
+        cat_list = set()
+        for cat in categories:
+            cat_list.add(cat.category)
+        data[i]=list(cat_list)
+    return data
+    '''
     data = {}
     for i in mod:
         cat1 = {}
@@ -267,7 +214,6 @@ def get_files_module(mod):
             cat1['category'+str(p)] = k    
         data[i]=cat1
     return data
-
 
 def error(request):
     pass1,fail,count = 0,0,0
@@ -324,7 +270,10 @@ def edit(request,module):
         return render(request, 'test_cases/edit.html', {'records':records,"module":module})
         #return render(request,'test_cases/error.html',{'name':'Hi!'})
     elif(request.method=="POST"):
-        obj = Tracker.objects.filter(module=module)
+        if(module=='All'):
+            obj = Tracker.objects.all()
+        else:
+            obj = Tracker.objects.filter(module=module)
         kainos = 'kainos_id'
         res = 'result'
         records = len(obj)+1
@@ -336,7 +285,6 @@ def edit(request,module):
             record.result=result
             record.last_modified = timezone.now()
             record.save()
-            remove_dups()
             l.append(record)
         return redirect('/track/browse/') 
 

@@ -5,8 +5,6 @@
   <h3 class="card-header text-center font-weight-bold text-uppercase py-4">Test Scripts Tracking</h3>
   <div class="card-body">
     <div id="table" class="table-editable">
-      <span class="table-add float-right mb-3 mr-2"><a href="#!" class="text-success"><i
-            class="fas fa-plus fa-2x" aria-hidden="true"></i></a></span>
       
         <tbody>
           <form action="{% url 'myapp:track' %}" method="post" id="trackForm">
@@ -44,7 +42,7 @@
                 {% endfor %}
               </tbody>
           </table>
-                  <div class="form-group" style="align-self: center;margin-left: 700px;">
+                  <div class="form-group text-center">
                       <button class="btn btn-primary" type="submit" value="Upload" id="submit">Submit</button>
                     </div>
               

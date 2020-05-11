@@ -9,16 +9,10 @@
 .rot:active{
   transform: rotateZ(-180deg);
 }
+.pad{
+  padding-bottom: 3px;
+}
 </style>
-<script type="text/javascript">
-  var a = "{{dict}}";
-  var j = JSON.parse(a)
-  alert(j);
-
-    
-</script>
-<p>{{dict}}</p>
-
 
 <div class="row ">
   <div class="col-md-8">
@@ -27,21 +21,20 @@
       <div class="btn-group">
         <a href="{% url 'myapp:module' 'All' %}" class="btn btn-light col col-lg text-left">All</a>
       </div>
-      
       {% for key1,value1 in dict.items%}  
       <div class="btn-group">
         
-          <a href="{% url 'myapp:module' i %}" class="btn btn-light col col-lg text-left">{{key1}}</a>
-            <button type="button" class="btn btn-light dropdown-toggle px-3 rot" data-toggle="collapse" data-target="#collapseOne{{i}}" aria-expanded="true" aria-controls="collapseOne{{i}}">
+          <a href="{% url 'myapp:module' key1 %}" class="btn btn-light col col-lg text-left">{{key1}}</a>
+            <button type="button" class="btn btn-light dropdown-toggle px-3 rot" data-toggle="collapse" data-target="#collapseOne{{key1}}" aria-expanded="true" aria-controls="collapseOne{{key1}}">
               <span class="sr-only">Toggle Dropdown</span>
             </button>
         </div>
-        <div id="collapseOne{{i}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div id="collapseOne{{key1}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
           <div class="card-body">
               {% for key2,value2 in value1.items %}
               <div class="list-group" style="align-content: center;">
-                <div class="btn-group">
-                  <a href="{% url 'myapp:category' module=i category=j%}" class="btn btn-warning col col-lg text-left">{{value2}}</a>
+                <div class="btn-group pad">
+                  <a href="{% url 'myapp:category' module=key1 category=value2%}" class="btn btn-warning col col-lg text-left">{{value2}}</a>
                 </div>
               </div>
               
@@ -49,6 +42,7 @@
           </div>
         </div>
         {% endfor %}
+      
       </div>
   </div>
 </div>
