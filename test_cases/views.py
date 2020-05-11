@@ -35,7 +35,6 @@ from django.views.generic import TemplateView
 from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required
-import xlwt
 
 class HomeView(View):
     def get(self,request,*args,**kwargs):
