@@ -38,11 +38,11 @@ from django.contrib.auth.decorators import permission_required
 
 class HomeView(View):
     def get(self,request,*args,**kwargs):
-        return render(request,'test_cases/login.html')
+        return render(request,'login.html')
 
 class DashboardView(View):
     def get(self,request,*args,**kwargs):
-        return render(request,'test_cases/dashboard.html')
+        return render(request,'dashboard.html')
 
 class ChartData(APIView):
     authentication_classes = []
@@ -76,7 +76,7 @@ class ChartData(APIView):
 class LoginView(View):
 
     def get(self,request,*args,**kwargs):
-        return render(request,'test_cases/login.html')
+        return render(request,'login.html')
     
     def post(self,request,*args,**kwargs):
         username = request.POST['name']
@@ -87,17 +87,17 @@ class LoginView(View):
             auth_login(request,user)
             return HttpResponseRedirect('/track/browse/')
         else:
-            return render(request,'test_cases/login.html',{'message':'Invalid Username or Password'})
+            return render(request,'login.html',{'message':'Invalid Username or Password'})
 
 class LogoutView(View):
 
     def get(self,request,*args,**kwargs):
         auth_logout(request)
-        return render(request,'test_cases/logout.html')
+        return render(request,'logout.html')
 
 class UploadView(View):
     def get(self,request,*args,**kwargs):
-        return render(request, 'test_cases/index.html')
+        return render(request, 'index.html')
     
     def post(self,request,*args,**kwargs):
         self.load_workbook(request)
@@ -130,7 +130,7 @@ class UploadView(View):
                     obj.save()
         
         except(NameError):
-            return render(request, 'test_cases/error.html', {'error': 'Could not load the sheet'})
+            return render(request, 'error.html', {'error': 'Could not load the sheet'})
 
 
 
@@ -143,7 +143,7 @@ def track(request):
             obj = Tracker.objects.filter(uuid=import_id,category=category)
             #choices = Tracker._meta.get_field('result').choices
             choices = ['Select','Pass','Fail']
-            return render(request, 'test_cases/track.html', {'sheet': obj,'choices':choices})
+            return render(request, 'track.html', {'sheet': obj,'choices':choices})
         elif("POST"==request.method):
             import_id = request.session['uuid']
             obj = Tracker.objects.filter(uuid = import_id)
@@ -167,7 +167,7 @@ def track(request):
                 #return render(request, 'test_cases/error.html', {'error': record})
 
     except(NameError):
-            return render(request, 'test_cases/error.html', {'error': 'Could not load the sheet'})
+            return render(request, 'error.html', {'error': 'Could not load the sheet'})
 
     
     #elif("POST" == request.method):
@@ -190,7 +190,7 @@ def browse(request):
             mod.add(i.module)
         dicts = get_files_module(mod)
 
-        return render(request, 'test_cases/browse.html', {'module': mod,'dict':dicts,'HCM':['Anunay','OTP']})
+        return render(request, 'browse.html', {'module': mod,'dict':dicts,'HCM':['Anunay','OTP']})
 
 def get_files_module(mod):
     '''data = {}
@@ -225,7 +225,7 @@ def error(request):
             else:
                 fail+=1
         percent = (pass1/count)*100
-        return render(request, 'test_cases/error.html', {'module':records,'pass':pass1,'fail':fail,'count':count,'percent':percent})
+        return render(request, 'error.html', {'module':records,'pass':pass1,'fail':fail,'count':count,'percent':percent})
 
 @permission_required('test_cases.can_view', login_url='/login/')
 def edit_category(request,module,category):
@@ -234,7 +234,7 @@ def edit_category(request,module,category):
             records = Tracker.objects.all()
         else:
             records = Tracker.objects.filter(module=module,category=category)
-        return render(request, 'test_cases/edit.html', {'records':records,"module":module,'category':category})
+        return render(request, 'edit.html', {'records':records,"module":module,'category':category})
     elif(request.method=="POST"):
         obj = Tracker.objects.filter(module=module,category=category)
         kainos = 'kainos_id'
@@ -254,7 +254,7 @@ def edit_category(request,module,category):
         mod = set()
         for i in records:
             mod.add(i.module)
-        return render(request, 'test_cases/browse.html', {'module': mod}) #render(request,'test_cases/module.html',{'records':obj,'module':obj})
+        return render(request, 'browse.html', {'module': mod}) #render(request,'test_cases/module.html',{'records':obj,'module':obj})
   
 
         
@@ -266,7 +266,7 @@ def edit(request,module):
             records = Tracker.objects.all()
         else:
             records = Tracker.objects.filter(module=module)
-        return render(request, 'test_cases/edit.html', {'records':records,"module":module})
+        return render(request, 'edit.html', {'records':records,"module":module})
         #return render(request,'test_cases/error.html',{'name':'Hi!'})
     elif(request.method=="POST"):
         if(module=='All'):
@@ -306,7 +306,7 @@ def category(request,module,category):
                 fail+=1
         if(count>0):
             percent = (pass1/count)*100
-        return render(request,'test_cases/category.html',{'records':records,'module':module,'category':category,'pass':pass1,'fail':fail,'count':count,'percent':percent})
+        return render(request,'category.html',{'records':records,'module':module,'category':category,'pass':pass1,'fail':fail,'count':count,'percent':percent})
        
 
 @permission_required('test_cases.can_view', login_url='/login/')
@@ -326,22 +326,22 @@ def module(request,module):
                 fail+=1
         if(count>0):
             percent = (pass1/count)*100
-        return render(request,'test_cases/module.html',{'records':records,'module':module,'pass':pass1,'fail':fail,'count':count,'percent':percent})
+        return render(request,'module.html',{'records':records,'module':module,'pass':pass1,'fail':fail,'count':count,'percent':percent})
 
 
 def upload(request):
     try:
         if(request.method == "GET"):
-            return render(request, 'test_cases/index.html', {})
+            return render(request, 'index.html', {})
 
         elif(request.method == 'POST'):
             load_workbook(request)
             render(request, 'upload.html', {'successful_submit': True})
 
     except(NameError, MultiValueDictKeyError, Tracker.DoesNotExist):
-        return render(request, 'test_cases/error.html', {'error': 'Please check the information and try again@'})
+        return render(request, 'error.html', {'error': 'Please check the information and try again@'})
     except(MultipleObjectsReturned):
-        return render(request, 'test_cases/error.html', {'error': 'Multiple Objects Returned'})
+        return render(request, 'error.html', {'error': 'Multiple Objects Returned'})
     else:
         return HttpResponseRedirect("/track")
 
