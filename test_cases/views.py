@@ -38,11 +38,11 @@ from django.contrib.auth.decorators import permission_required
 
 class HomeView(View):
     def get(self,request,*args,**kwargs):
-        return render(request,'login.html')
+        return render(request,'test_cases/login.html')
 
 class DashboardView(View):
     def get(self,request,*args,**kwargs):
-        return render(request,'dashboard.html')
+        return render(request,'test_cases/dashboard.html')
 
 class ChartData(APIView):
     authentication_classes = []
@@ -87,7 +87,7 @@ class LoginView(View):
             auth_login(request,user)
             return HttpResponseRedirect('/track/browse/')
         else:
-            return render(request,'login.html',{'message':'Invalid Username or Password'})
+            return render(request,'test_cases/login.html',{'message':'Invalid Username or Password'})
 
 class LogoutView(View):
 
