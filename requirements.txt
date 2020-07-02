@@ -4,3 +4,4 @@ django-heroku
 djangorestframework
 pandas
 pyexcel_xlsx
+django-excel

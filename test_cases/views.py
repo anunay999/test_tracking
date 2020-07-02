@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 from rest_framework.views import APIView,View
@@ -82,7 +81,6 @@ class LoginView(View):
         username = request.POST['name']
         password = request.POST['password']
         #request.session['name'] 
-        user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request,user)
             return HttpResponseRedirect('/track/browse/')
