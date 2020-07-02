@@ -81,6 +81,8 @@ class LoginView(View):
         username = request.POST['name']
         password = request.POST['password']
         #request.session['name'] 
+        user = authenticate(request, username=username, password=password)
+
         if user is not None:
             auth_login(request,user)
             return HttpResponseRedirect('/track/browse/')
