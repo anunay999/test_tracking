@@ -75,7 +75,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'test_tracking.wsgi.application'
-
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

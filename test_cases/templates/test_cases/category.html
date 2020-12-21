@@ -70,8 +70,10 @@
                             <th class="text-center">Last Modified</th>
                             <th class="text-center">Tester</th>
                             <th class="text-center">Module</th>
-                            <th class="text-center">Kainos Automation</th>
+                            <th class="text-center">Category</th>
                             <th class="text-center">Pass/Fail</th>
+                            <th class="text-center">Case ID</th>
+
                           </tr>
                         </thead>
                     {% for row in records%}
@@ -80,9 +82,11 @@
                       <td class="pt-3-half" contenteditable="false" id="scenario{{ forloop.counter }}">{{row.scenario}}</td>
                         <td class="pt-3-half" contenteditable="false" id="last_modified{{ forloop.counter }}">{{row.last_modified}}</td>
                         <td class="pt-3-half" contenteditable="false" id="name{{ forloop.counter }}">{{row.name}}</td>
-                        <td class="pt-3-half" contenteditable="false" id="last_modified{{ forloop.counter }}">{{row.module}}</td>
-                        <td class="pt-3-half" contenteditable="false" id="kainos_id{{ forloop.counter }}">{{row.kainos_id}}</td>
-                        <td class="pt-3-half" contenteditable="false" id="last_modified{{ forloop.counter }}">{{row.result}}</td>
+                        <td class="pt-3-half" contenteditable="false" id="module{{ forloop.counter }}">{{row.module}}</td>
+                        <td class="pt-3-half" contenteditable="false" id="category{{ forloop.counter }}">{{row.category}}</td>
+                        <td class="pt-3-half" contenteditable="false" id="result{{ forloop.counter }}">{{row.result}}</td>
+                        <td class="pt-3-half" contenteditable="false" id="case_id{{ forloop.counter }}">{{row.case_id}}</td>
+                        
                       </tr>
                       {% endfor %}
                     </tbody>

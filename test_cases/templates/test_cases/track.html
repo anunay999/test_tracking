@@ -16,7 +16,8 @@
                       <th class="text-center">Last Modified</th>
                       <th class="text-center">Tester</th>
                       <th class="text-center">Module</th>
-                      <th class="text-center">Kainos Automation</th>
+                      <th class="text-center">Category</th>
+
                       <th class="text-center">Pass/Fail</th>
                     </tr>
                   </thead>
@@ -27,8 +28,8 @@
                   <td class="pt-3-half" contenteditable="false" id="last_modified{{ forloop.counter }}">{{row.last_modified}}</td>
                   <td class="pt-3-half" contenteditable="false" id="name{{ forloop.counter }}">{{row.name}}</td>
                   <td class="pt-3-half" contenteditable="false" id="last_modified{{ forloop.counter }}">{{row.module}}</td>
+                  <td class="pt-3-half" contenteditable="false" id="last_modified{{ forloop.counter }}">{{row.category}}</td>
                   
-                  <td class="pt-3-half" contenteditable="true" id="kainos_id{{ forloop.counter }}"><input type="text" name="kainos_id{{forloop.counter}}" value="{{row.kainos_id}}" readonly></td>
                   <td>
                     <div class="btn-group">
                             <select class ="result" name="result{{ forloop.counter }}" value="result" id="result{{ forloop.counter }}">
@@ -38,6 +39,8 @@
                             </select>
                         </div>
                   </td>
+                  <td class="pt-3-half" contenteditable="true" id="kainos_id{{ forloop.counter }}"><input type="text" name="kainos_id{{forloop.counter}}" style="visibility:hidden;" value="{{row.case_id}}" readonly></td>
+                  
                 </tr>
                 {% endfor %}
               </tbody>
